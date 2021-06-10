@@ -14,10 +14,12 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return array(
+        'version' => $router->app->version(),
+    );
 });
 
-$router->group(['prefix' => 'authors', 'namespace'], function () use ($router) {
+$router->group(['prefix' => 'authors'], function () use ($router) {
     $router->get('/', 'Author@index');
     $router->post('/', 'Author@store');
     $router->get('/{id:\d+}', 'Author@show');
