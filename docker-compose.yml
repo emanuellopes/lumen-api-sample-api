@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./_dev/local.config/php.ini:/usr/local/etc/php/conf.d/local.ini
+
+  mysql:
+    image: mariadb:10.5.1
+    container_name: "mysql-lumen"
+    volumes:
+      - 'mariadb_data:/var/lib/mysql'
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=lumen
+    restart: always
+
+  nginx:
+    image: nginx:1.17.9
+    container_name: "nginx-lumen"
+    ports:
+      - '80:80'
+    volumes:
+      - ./:/var/www
+      - ./_dev/local.config/nginx:/etc/nginx/conf.d
+    restart: always
+volumes:
+  mariadb_data:
+    driver: local
