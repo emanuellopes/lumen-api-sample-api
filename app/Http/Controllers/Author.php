@@ -103,8 +103,13 @@ class Author extends Controller
     /**
      * delete on authors
      */
-    public function destroy(int $id): Response
+    public function destroy(int $id): JsonResponse
     {
+        $itemsRemoved = AuthorModel::destroy($id);
+        if ($itemsRemoved >= 1) {
+            return $this->successResponse("Author has been deleted");
+        }
 
+        return $this->errorResponse("can't delete author", Response::HTTP_NOT_FOUND);
     }
 }
