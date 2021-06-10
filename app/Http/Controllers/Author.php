@@ -2,25 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Author as AuthorModel;
-use Illuminate\Validation\ValidationException;
 
 class Author extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-    }
-
-
     /**
      * Return the list of authors
      *
@@ -41,11 +29,7 @@ class Author extends Controller
             'country' => 'required|max:255|string|in:PT,US,CH',
         ];
 
-        try {
-            $this->validate($request, $rules);
-        } catch (ValidationException $e) {
-            return $this->errorResponse($e->errors(), Response::HTTP_BAD_REQUEST);
-        }
+        $this->validate($request, $rules);
 
         $author = AuthorModel::create($request->all());
 
@@ -57,11 +41,7 @@ class Author extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        try {
-            $author = AuthorModel::findOrFail($id);
-        } catch (ModelNotFoundException $e) {
-            return $this->errorResponse($e->getMessage(), Response::HTTP_NOT_FOUND);
-        }
+        $author = AuthorModel::findOrFail($id);
 
         return $this->successResponse($author);
     }
@@ -77,14 +57,8 @@ class Author extends Controller
             'country' => 'size:2|string|in:PT,US,CH',
         ];
 
-        try {
-            $this->validate($request, $rules);
-            $author = AuthorModel::findOrFail($id);
-        } catch (ValidationException $e) {
-            return $this->errorResponse($e->errors(), Response::HTTP_BAD_REQUEST);
-        } catch (ModelNotFoundException $e) {
-            return $this->errorResponse($e->getMessage(), Response::HTTP_NOT_FOUND);
-        }
+        $this->validate($request, $rules);
+        $author = AuthorModel::findOrFail($id);
 
         $author->fill($request->all());
 
