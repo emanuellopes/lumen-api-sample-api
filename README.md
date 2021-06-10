@@ -1,4 +1,16 @@
-# Lumen PHP Framework
+# Lumen PHP Framework Sample project with mysql and Docker
+
+#Start the containers
+```
+docker-compose up -d
+```
+
+#stop containers
+```
+docker-compose down
+```
+
+
 
 [![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
 [![Total Downloads](https://img.shields.io/packagist/dt/laravel/framework)](https://packagist.org/packages/laravel/lumen-framework)
