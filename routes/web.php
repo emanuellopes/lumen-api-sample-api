@@ -17,11 +17,11 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['prefix' => 'authors'], function () use ($router) {
+$router->group(['prefix' => 'authors', 'namespace'], function () use ($router) {
     $router->get('/', 'Author@index');
     $router->post('/', 'Author@store');
-    $router->get('/{id}', 'Author@show');
-    $router->put('/{id}', 'Author@update');
-    $router->patch('/{id}', 'Author@update');
-    $router->delete('/{id}', 'Author@destroy');
+    $router->get('/{id:\d+}', 'Author@show');
+    $router->put('/{id:\d+}', 'Author@update');
+    $router->patch('/{id:\d+}', 'Author@update');
+    $router->delete('/{id:\d+}', 'Author@destroy');
 });
