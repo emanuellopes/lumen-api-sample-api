@@ -2,26 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Repository\Eloquent\Contracts\AuthorRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Models\Author as AuthorModel;
+use Illuminate\Support\Facades\Cache;
 
 class Author extends Controller
 {
+    private AuthorRepository $authorRepository;
+
+    public function __construct(AuthorRepository $authorRepository)
+    {
+        $this->authorRepository = $authorRepository;
+    }
+
     /**
      * Return the list of authors
      *
      */
-    public function index(): JsonResponse
+    public function all(): JsonResponse
     {
-        return $this->successResponse(AuthorModel::all());
+
+        $cache = Cache::get('_author_all');
+        if ( ! empty($cache)) {
+            return $this->successResponse($cache);
+        } else {
+            $author = $this->authorRepository->all();
+            Cache::put('_author_index', $author);
+
+            return $this->successResponse($author);
+        }
+
     }
 
     /**
      * Create one new author
      */
-    public function store(Request $request): JsonResponse
+    public function create(Request $request): JsonResponse
     {
         $rules = [
             'name'    => 'required|max:255|string|unique:authors',
@@ -31,7 +49,7 @@ class Author extends Controller
 
         $this->validate($request, $rules);
 
-        $author = AuthorModel::create($request->all());
+        $author = $this->authorRepository->create($request->all());
 
         return $this->successResponse($author, Response::HTTP_CREATED);
     }
@@ -39,9 +57,9 @@ class Author extends Controller
     /**
      * obtains and show one author
      */
-    public function show(int $id): JsonResponse
+    public function getSingleAuthor(int $id): JsonResponse
     {
-        $author = AuthorModel::findOrFail($id);
+        $author = $this->authorRepository->findOrFail($id);
 
         return $this->successResponse($author);
     }
@@ -58,7 +76,7 @@ class Author extends Controller
         ];
 
         $this->validate($request, $rules);
-        $author = AuthorModel::findOrFail($id);
+        $author = $this->authorRepository->findOrFail($id);
 
         $author->fill($request->all());
 
@@ -79,7 +97,7 @@ class Author extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        $itemsRemoved = AuthorModel::destroy($id);
+        $itemsRemoved = $this->authorRepository->destroy($id);
         if ($itemsRemoved >= 1) {
             return $this->successResponse("Author has been deleted");
         }

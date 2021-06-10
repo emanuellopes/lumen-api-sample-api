@@ -20,9 +20,9 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'authors'], function () use ($router) {
-    $router->get('/', 'Author@index');
-    $router->post('/', 'Author@store');
-    $router->get('/{id:\d+}', 'Author@show');
+    $router->get('/', 'Author@all');
+    $router->post('/', 'Author@create');
+    $router->get('/{id:\d+}', 'Author@getSingleAuthor');
     $router->put('/{id:\d+}', 'Author@update');
     $router->patch('/{id:\d+}', 'Author@update');
     $router->delete('/{id:\d+}', 'Author@destroy');
